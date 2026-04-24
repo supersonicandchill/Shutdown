@@ -1,417 +1,1025 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet"/>
-<title>Away Game — Christian Parent’s Playbook</title>
-<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shutdown Ritual</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: #f8f9fa; font-family: 'DM Sans', system-ui, sans-serif; color: #1a1a1a; line-height: 1.6; }
-button { cursor: pointer; }
-.progress-bar { height: 10px; background: #e9ecef; border-radius: 9999px; overflow: hidden; }
-.progress-fill { height: 100%; transition: width 0.5s ease; }
-.team-card { background: #fff; border: 1px solid #dee2e6; border-radius: 16px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.06); }
-.delete-btn { background: #fee2e2; color: #ef4444; border: none; width: 32px; height: 32px; border-radius: 8px; font-size: 18px; }
+  :root {
+    --bg: #0e0f11;
+    --surface: #16181c;
+    --surface2: #1e2026;
+    --border: #2a2d35;
+    --text: #e8e6e1;
+    --muted: #7a7d87;
+    --accent: #c9a96e;
+    --accent2: #6e9ecf;
+    --green: #6eb89e;
+    --red: #c97b7b;
+    --radius: 12px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    min-height: 100vh;
+    padding: 0 0 60px;
+  }
+
+  /* Header */
+  .header {
+    padding: 32px 24px 0;
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  .header-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  .logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    color: var(--text);
+    letter-spacing: -0.5px;
+    line-height: 1;
+  }
+
+  .logo span {
+    color: var(--accent);
+    font-style: italic;
+  }
+
+  .streak-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 12px;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+
+  .streak-badge .flame { font-size: 14px; }
+
+  .date-line {
+    color: var(--muted);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+
+  /* Nav tabs */
+  .nav {
+    max-width: 680px;
+    margin: 0 auto 28px;
+    padding: 0 24px;
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-btn {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 10px 14px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .nav-btn.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  .nav-btn:hover:not(.active) { color: var(--text); }
+
+  /* Views */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* Form */
+  .form-wrap {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .section-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px;
+  }
+
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .win-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .win-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .win-num {
+    color: var(--accent);
+    font-size: 11px;
+    width: 16px;
+    flex-shrink: 0;
+  }
+
+  input[type="text"], textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    padding: 10px 14px;
+    outline: none;
+    transition: border-color 0.2s;
+    resize: none;
+  }
+
+  input[type="text"]:focus, textarea:focus {
+    border-color: var(--accent);
+  }
+
+  input[type="text"]::placeholder, textarea::placeholder {
+    color: var(--muted);
+  }
+
+  textarea { min-height: 80px; line-height: 1.6; }
+
+  /* Energy Slider */
+  .energy-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .energy-display {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .energy-val {
+    font-family: 'DM Serif Display', serif;
+    font-size: 36px;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .energy-label {
+    font-size: 11px;
+    color: var(--muted);
+    text-align: right;
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    box-shadow: 0 0 0 3px rgba(201,169,110,0.2);
+    transition: box-shadow 0.2s;
+  }
+
+  input[type="range"]::-webkit-slider-thumb:hover {
+    box-shadow: 0 0 0 6px rgba(201,169,110,0.25);
+  }
+
+  .energy-pips {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* Tomorrow */
+  .tomorrow-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .tmr-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .tmr-num {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--accent2);
+    color: var(--bg);
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-weight: 500;
+  }
+
+  /* One word */
+  .oneword-wrap {
+    position: relative;
+  }
+
+  #oneWord {
+    font-family: 'DM Serif Display', serif;
+    font-size: 24px;
+    text-align: center;
+    letter-spacing: 0.02em;
+    padding: 16px 20px;
+    color: var(--text);
+  }
+
+  #oneWord::placeholder {
+    font-family: 'DM Serif Display', serif;
+    font-size: 24px;
+    color: var(--border);
+    font-style: italic;
+  }
+
+  /* Save button */
+  .save-btn {
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    border-radius: var(--radius);
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 16px;
+    cursor: pointer;
+    width: 100%;
+    font-weight: 500;
+    transition: opacity 0.2s, transform 0.1s;
+  }
+
+  .save-btn:hover { opacity: 0.9; }
+  .save-btn:active { transform: scale(0.99); }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--green);
+    color: var(--bg);
+    padding: 10px 24px;
+    border-radius: 20px;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    transition: transform 0.3s ease;
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* Past entries */
+  .log-wrap {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  .entry-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 14px;
+    overflow: hidden;
+  }
+
+  .entry-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .entry-header:hover { background: var(--surface2); }
+
+  .entry-date {
+    font-size: 12px;
+    color: var(--text);
+    letter-spacing: 0.04em;
+  }
+
+  .entry-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .entry-word {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    color: var(--accent);
+    font-size: 14px;
+  }
+
+  .entry-energy-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent2);
+  }
+
+  .entry-chevron {
+    color: var(--muted);
+    font-size: 10px;
+    transition: transform 0.2s;
+  }
+
+  .entry-chevron.open { transform: rotate(180deg); }
+
+  .entry-body {
+    display: none;
+    padding: 0 18px 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .entry-body.open { display: block; }
+
+  .entry-section {
+    margin-top: 14px;
+  }
+
+  .entry-section-title {
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .entry-section-content {
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  .win-list { list-style: none; }
+  .win-list li::before { content: '✓ '; color: var(--green); }
+
+  .tmr-list { list-style: none; }
+  .tmr-list li { counter-increment: tmr; }
+  .tmr-list li::before { content: counter(tmr) '. '; color: var(--accent2); }
+  .tmr-list { counter-reset: tmr; }
+
+  .energy-bar-wrap {
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 4px;
+  }
+
+  .energy-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 24px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.8;
+  }
+
+  .empty-state .big { font-family: 'DM Serif Display', serif; font-size: 32px; color: var(--border); display: block; margin-bottom: 8px; }
+
+  /* Weekly summary */
+  .week-wrap {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  .week-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    margin-bottom: 28px;
+  }
+
+  .day-cell {
+    text-align: center;
+  }
+
+  .day-label {
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .day-energy {
+    height: 50px;
+    border-radius: 6px;
+    background: var(--border);
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+  }
+
+  .day-energy-fill {
+    width: 100%;
+    background: var(--accent);
+    border-radius: 6px;
+    transition: height 0.5s ease;
+    min-height: 0;
+  }
+
+  .day-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--border);
+    margin: 6px auto 0;
+  }
+
+  .day-dot.has-entry { background: var(--green); }
+
+  .stat-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 16px;
+    text-align: center;
+  }
+
+  .stat-val {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .stat-lbl {
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .wins-cloud {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+
+  .wins-cloud-title {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+
+  .wins-cloud-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .wins-chip {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 11px;
+    color: var(--text);
+  }
+
+  .week-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+
+  .week-nav-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    border-radius: 8px;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .week-nav-btn:hover { color: var(--text); border-color: var(--accent); }
+
+  .week-title {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+  }
 </style>
 </head>
 <body>
-<div id="root"></div>
-<script type="text/babel" data-presets="react">
-const { useState } = React;
 
-// ─── STORAGE ──────────────────────────────────────────────────────────────────
-function load(key, fb) { try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fb; } catch { return fb; } }
-function save(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch {} }
-let _c = Date.now();
-function uid() { return "x" + (++_c).toString(36); }
+<div class="header">
+  <div class="header-top">
+    <div class="logo">Shutdown <span>Ritual</span></div>
+    <div class="streak-badge">
+      <span class="flame">🔥</span>
+      <span id="streakCount">0</span> day streak
+    </div>
+  </div>
+  <div class="date-line" id="todayDate"></div>
+</div>
 
-// ─── COLORS ───────────────────────────────────────────────────────────────────
-const C = {
-  bg0: "#f8f9fa", bg1: "#ffffff", bg2: "#f1f3f5", bg3: "#e9ecef",
-  border: "#dee2e6", borderHi: "#ff8c00",
-  text: "#1a1a1a", textSub: "#495057", textMuted: "#6c757d",
-  orange: "#ff8c00", green: "#00b36b"
+<nav class="nav">
+  <button class="nav-btn active" data-view="today">Today</button>
+  <button class="nav-btn" data-view="log">Log</button>
+  <button class="nav-btn" data-view="week">Weekly</button>
+</nav>
+
+<!-- TODAY VIEW -->
+<div id="view-today" class="view active">
+  <div class="form-wrap">
+
+    <div class="section-card">
+      <div class="section-label">Today's Wins</div>
+      <div class="win-fields">
+        <div class="win-row">
+          <span class="win-num">01</span>
+          <input type="text" id="win1" placeholder="Something that went well…" maxlength="120">
+        </div>
+        <div class="win-row">
+          <span class="win-num">02</span>
+          <input type="text" id="win2" placeholder="Another win, big or small…" maxlength="120">
+        </div>
+        <div class="win-row">
+          <span class="win-num">03</span>
+          <input type="text" id="win3" placeholder="One more…" maxlength="120">
+        </div>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="section-label">Grateful For</div>
+      <div class="win-fields">
+        <div class="win-row">
+          <span class="win-num" style="color:var(--green)">01</span>
+          <input type="text" id="grat1" placeholder="Something I'm thankful for…" maxlength="120">
+        </div>
+        <div class="win-row">
+          <span class="win-num" style="color:var(--green)">02</span>
+          <input type="text" id="grat2" placeholder="A person, moment, or gift…" maxlength="120">
+        </div>
+        <div class="win-row">
+          <span class="win-num" style="color:var(--green)">03</span>
+          <input type="text" id="grat3" placeholder="Even something small…" maxlength="120">
+        </div>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="section-label">What I'd Do Differently</div>
+      <textarea id="differently" placeholder="No judgment — just honest reflection…" maxlength="400"></textarea>
+    </div>
+
+    <div class="section-card">
+      <div class="section-label">Energy Level</div>
+      <div class="energy-wrap">
+        <div class="energy-display">
+          <div class="energy-val" id="energyVal">5</div>
+          <div class="energy-label" id="energyLabel">Steady</div>
+        </div>
+        <input type="range" id="energySlider" min="1" max="10" value="5">
+        <div class="energy-pips">
+          <span>1 — depleted</span>
+          <span>10 — charged</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="section-label">Tomorrow's Top 3</div>
+      <div class="tomorrow-fields">
+        <div class="tmr-row">
+          <div class="tmr-num">1</div>
+          <input type="text" id="tmr1" placeholder="Most important task…" maxlength="120">
+        </div>
+        <div class="tmr-row">
+          <div class="tmr-num">2</div>
+          <input type="text" id="tmr2" placeholder="Second priority…" maxlength="120">
+        </div>
+        <div class="tmr-row">
+          <div class="tmr-num">3</div>
+          <input type="text" id="tmr3" placeholder="Third priority…" maxlength="120">
+        </div>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="section-label">One Word for the Day</div>
+      <div class="oneword-wrap">
+        <input type="text" id="oneWord" placeholder="Grateful" maxlength="30">
+      </div>
+    </div>
+
+    <button class="save-btn" onclick="saveEntry()">— Close the Day —</button>
+  </div>
+</div>
+
+<!-- LOG VIEW -->
+<div id="view-log" class="view">
+  <div class="log-wrap" id="logContainer"></div>
+</div>
+
+<!-- WEEKLY VIEW -->
+<div id="view-week" class="view">
+  <div class="week-wrap">
+    <div class="week-nav">
+      <button class="week-nav-btn" onclick="changeWeek(-1)">&#8592;</button>
+      <div class="week-title" id="weekTitle"></div>
+      <button class="week-nav-btn" onclick="changeWeek(1)">&#8594;</button>
+    </div>
+    <div class="week-grid" id="weekGrid"></div>
+    <div class="stat-row" id="statRow"></div>
+    <div class="wins-cloud" id="winsCloud"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast">Entry saved ✓</div>
+
+<script>
+const STORAGE_KEY = 'shutdown_ritual_v1';
+let weekOffset = 0;
+
+const energyLabels = {
+  1: 'Depleted', 2: 'Drained', 3: 'Low',
+  4: 'Tired', 5: 'Steady', 6: 'Decent',
+  7: 'Good', 8: 'Strong', 9: 'Energized', 10: 'Charged'
 };
 
-// ─── VIRTUES (Complete) ───────────────────────────────────────────────────────
-const VIRTUES = {
-  L: { key:"L", label:"Love", icon:"❤️", tagline:"Others-first in a me-first culture", color:"#ff4d4d", bg:"#fff0f0", border:"#ff8c00",
-       scoreMeaning: "0=Never • 1=Rarely • 2=Sometimes • 3=Consistently puts others first",
-       strong: ["Celebrates teammates' success", "Shows genuine kindness", "Puts team above self"],
-       weak:   ["Selfish on and off the field", "Dismisses or ignores teammates", "Only cheers for own highlights"],
-       develop: ["After each game, name one teammate who helped you win", "Do one act of encouragement before you leave the field", "Pray: 'Lord, help me love my teammates the way You love me'"] },
-  P: { key:"P", label:"Peace", icon:"☮️", tagline:"Calm anchored in Christ", color:"#00b36b", bg:"#f0fff4", border:"#ff8c00",
-       scoreMeaning: "0=Constant anxiety • 1=Occasional calm • 2=Usually calm • 3=Peace that guards the heart",
-       strong: ["Stays composed under pressure", "Calms teammates in tense moments", "Bounces back quickly from mistakes"],
-       weak:   ["Anxious or panicked when things go wrong", "Spreads tension to teammates", "Dwells on errors during play"],
-       develop: ["Practice three slow breaths before any big moment", "Write down one worry this week and give it to God in prayer", "Memorize Phil. 4:7 — let it anchor your pregame routine"] },
-  S: { key:"S", label:"Self-Control", icon:"🛡️", tagline:"Responding instead of reacting", color:"#0077cc", bg:"#f0f8ff", border:"#ff8c00",
-       scoreMeaning: "0=Frequent outbursts • 1=Improving • 2=Usually controlled • 3=Strong self-discipline",
-       strong: ["Responds to bad calls without blowing up", "Keeps emotions in check under provocation", "Leads by example in discipline"],
-       weak:   ["Frequent outbursts or meltdowns", "Argues with officials or coaches", "Lets frustration hurt performance"],
-       develop: ["Identify your #1 trigger — name it, then make a plan for it", "After a bad call, count to 5 before you react", "Ask a trusted teammate to hold you accountable this week"] },
-  G: { key:"G", label:"Gentleness", icon:"🌿", tagline:"Strength under control", color:"#9c4dff", bg:"#f8f0ff", border:"#ff8c00",
-       scoreMeaning: "0=Often harsh • 1=Sometimes gentle • 2=Usually gentle • 3=Strength under control",
-       strong: ["Encourages struggling teammates", "Competes hard without being cruel", "Uses words that build up, not tear down"],
-       weak:   ["Often harsh or cutting with words", "Intimidates or belittles others", "Confuses meanness with toughness"],
-       develop: ["Before criticizing a teammate, ask: 'Is this kind AND true?'", "Find one struggling player this week and intentionally encourage them", "Journal: where did strength AND gentleness show up together today?"] },
-  H: { key:"H", label:"Humility", icon:"🙏", tagline:"Playing from identity, not for identity", color:"#ff8c00", bg:"#fff8f0", border:"#ff8c00",
-       scoreMeaning: "0=Very prideful • 1=Occasional humility • 2=Growing humility • 3=Consistently humble",
-       strong: ["Credits teammates and coaches for success", "Accepts coaching without defensiveness", "Secure enough to celebrate others"],
-       weak:   ["Takes credit, deflects blame", "Gets defensive when corrected", "Needs to be the star"],
-       develop: ["After your next win, publicly credit two specific teammates", "When corrected by a coach, respond: 'Thank you, I'll work on that'", "Ask yourself: 'Am I playing TO prove something or FROM knowing who I am?'"] },
-  Gr: { key:"Gr", label:"Gratitude", icon:"🙌", tagline:"Thankful in all circumstances", color:"#ffaa00", bg:"#fffdf0", border:"#ff8c00",
-       scoreMeaning: "0=Very entitled • 1=Occasional thanks • 2=Usually grateful • 3=Thankful in all circumstances",
-       strong: ["Thanks coaches, officials, and opponents", "Grateful for the opportunity to compete", "Positive attitude win or lose"],
-       weak:   ["Entitled attitude about playing time or roles", "Rarely thanks others", "Complains about conditions, calls, or teammates"],
-       develop: ["Start every practice with one thing you're grateful for about this team", "Write a one-line thank-you to a coach or teammate this week", "After a loss, find three genuine things to be thankful for before you leave"] },
-  J: { key:"J", label:"Joy", icon:"🎉", tagline:"Delight that outlasts the score", color:"#ff6600", bg:"#fff4f0", border:"#ff8c00",
-       scoreMeaning: "0=Joy is gone • 1=Rare joy • 2=Usually joyful • 3=Consistent delight",
-       strong: ["Genuine enjoyment of the game", "Joy that doesn't depend on the scoreboard", "Lifts the energy of those around them"],
-       weak:   ["Only happy when winning", "Drains team energy with negativity", "Has lost the love of the game"],
-       develop: ["Recall why you first fell in love with this sport — write it down", "Find one moment in each practice to just enjoy the game", "Remind yourself: the scoreboard is temporary, but who you're becoming is not"] }
-};
-
-const SCORE_LABELS = ["Missing", "Emerging", "Developing", "Strong"];
-
-// ─── HELPERS ──────────────────────────────────────────────────────────────────
-function getCombo(scores) {
-  const strong = Object.values(scores).filter(v => v === 3).length;
-  const developing = Object.values(scores).filter(v => v >= 2).length;
-  const avg = (Object.values(scores).reduce((a,b) => a + b, 0) / 7).toFixed(1);
-
-  if (strong >= 5) return { label: "Kingdom Competitor", icon: "🏆", desc: `Avg ${avg}/3`, color: C.orange, progress: 95 };
-  if (developing >= 6) return { label: "Strong Disciple", icon: "🌟", desc: `Avg ${avg}/3`, color: C.green, progress: 85 };
-  return { label: "Developing Disciple", icon: "🌱", desc: `Avg ${avg}/3`, color: "#fd7e14", progress: Math.round(developing / 7 * 100) };
+// Init
+function getToday() {
+  return new Date().toISOString().split('T')[0];
 }
 
-function calculateTeamProgress(athletes) {
-  if (athletes.length === 0) return { avgScore: "0.0", strongPercent: 0, totalAthletes: 0 };
-  let totalScore = 0, totalStrong = 0;
-  const totalVirtues = athletes.length * 7;
+function formatDate(dateStr) {
+  const d = new Date(dateStr + 'T12:00:00');
+  return d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+}
 
-  athletes.forEach(a => {
-    const scores = Object.values(a.scores || {});
-    totalScore += scores.reduce((a,b) => a + b, 0);
-    totalStrong += scores.filter(v => v === 3).length;
+function getEntries() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+  catch { return {}; }
+}
+
+function saveEntries(entries) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+}
+
+// Streak
+function calcStreak() {
+  const entries = getEntries();
+  const keys = Object.keys(entries).sort().reverse();
+  if (!keys.length) return 0;
+  let streak = 0;
+  let check = new Date();
+  check.setHours(0,0,0,0);
+  for (let i = 0; i < keys.length; i++) {
+    const d = new Date(keys[i] + 'T12:00:00');
+    d.setHours(0,0,0,0);
+    const diff = Math.round((check - d) / 86400000);
+    if (diff === 0 || diff === 1) { streak++; check = d; }
+    else break;
+  }
+  return streak;
+}
+
+// Load today's saved entry into form if exists
+function loadTodayForm() {
+  const entries = getEntries();
+  const today = getToday();
+  const e = entries[today];
+  if (!e) return;
+  document.getElementById('win1').value = e.wins[0] || '';
+  document.getElementById('win2').value = e.wins[1] || '';
+  document.getElementById('win3').value = e.wins[2] || '';
+  document.getElementById('grat1').value = e.grat[0] || '';
+  document.getElementById('grat2').value = e.grat[1] || '';
+  document.getElementById('grat3').value = e.grat[2] || '';
+  document.getElementById('differently').value = e.differently || '';
+  document.getElementById('energySlider').value = e.energy || 5;
+  document.getElementById('energyVal').textContent = e.energy || 5;
+  document.getElementById('energyLabel').textContent = energyLabels[e.energy] || 'Steady';
+  document.getElementById('tmr1').value = e.tmr[0] || '';
+  document.getElementById('tmr2').value = e.tmr[1] || '';
+  document.getElementById('tmr3').value = e.tmr[2] || '';
+  document.getElementById('oneWord').value = e.word || '';
+}
+
+function saveEntry() {
+  const wins = [
+    document.getElementById('win1').value.trim(),
+    document.getElementById('win2').value.trim(),
+    document.getElementById('win3').value.trim()
+  ].filter(Boolean);
+
+  const entry = {
+    date: getToday(),
+    wins,
+    grat: [
+      document.getElementById('grat1').value.trim(),
+      document.getElementById('grat2').value.trim(),
+      document.getElementById('grat3').value.trim()
+    ].filter(Boolean),
+    differently: document.getElementById('differently').value.trim(),
+    energy: parseInt(document.getElementById('energySlider').value),
+    tmr: [
+      document.getElementById('tmr1').value.trim(),
+      document.getElementById('tmr2').value.trim(),
+      document.getElementById('tmr3').value.trim()
+    ].filter(Boolean),
+    word: document.getElementById('oneWord').value.trim(),
+    ts: Date.now()
+  };
+
+  const entries = getEntries();
+  entries[entry.date] = entry;
+  saveEntries(entries);
+
+  document.getElementById('streakCount').textContent = calcStreak();
+  showToast('Entry saved ✓');
+  renderLog();
+  renderWeek();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+// Log view
+function renderLog() {
+  const entries = getEntries();
+  const keys = Object.keys(entries).sort().reverse();
+  const container = document.getElementById('logContainer');
+
+  if (!keys.length) {
+    container.innerHTML = `<div class="empty-state"><span class="big">∅</span>No entries yet.<br>Complete your first shutdown ritual above.</div>`;
+    return;
+  }
+
+  container.innerHTML = keys.map(k => {
+    const e = entries[k];
+    const winList = (e.wins || []).map(w => `<li>${w}</li>`).join('') || '<li style="color:var(--muted)">—</li>';
+    const tmrList = (e.tmr || []).map(t => `<li>${t}</li>`).join('') || '<li style="color:var(--muted)">—</li>';
+    const pct = ((e.energy || 5) / 10) * 100;
+    return `
+    <div class="entry-card">
+      <div class="entry-header" onclick="toggleEntry('${k}')">
+        <div class="entry-date">${formatDate(k)}</div>
+        <div class="entry-meta">
+          <span class="entry-word">${e.word || ''}</span>
+          <div class="entry-energy-dot" style="background: hsl(${(e.energy||5)*22}, 60%, 55%)"></div>
+          <span class="entry-chevron" id="chev-${k}">▼</span>
+        </div>
+      </div>
+      <div class="entry-body" id="body-${k}">
+        <div class="entry-section">
+          <div class="entry-section-title">Energy</div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div class="energy-bar-wrap" style="flex:1">
+              <div class="energy-bar-fill" style="width:${pct}%"></div>
+            </div>
+            <span style="font-size:12px;color:var(--accent)">${e.energy || 5}/10</span>
+          </div>
+        </div>
+        <div class="entry-section">
+          <div class="entry-section-title">Grateful For</div>
+          <ul class="win-list entry-section-content" style="--bullet-color:var(--green)">
+            ${(e.grat || []).length ? (e.grat || []).map(g => `<li style="list-style:none"><span style="color:var(--green)">♡ </span>${g}</li>`).join('') : '<li style="color:var(--muted);list-style:none">—</li>'}
+          </ul>
+        </div>
+        <div class="entry-section">
+          <div class="entry-section-title">Wins</div>
+          <ul class="win-list entry-section-content">${winList}</ul>
+        </div>
+        <div class="entry-section">
+          <div class="entry-section-title">What I'd Do Differently</div>
+          <div class="entry-section-content">${e.differently || '<span style="color:var(--muted)">—</span>'}</div>
+        </div>
+        <div class="entry-section">
+          <div class="entry-section-title">Tomorrow</div>
+          <ul class="tmr-list entry-section-content">${tmrList}</ul>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleEntry(k) {
+  const body = document.getElementById('body-' + k);
+  const chev = document.getElementById('chev-' + k);
+  body.classList.toggle('open');
+  chev.classList.toggle('open');
+}
+
+// Weekly view
+function getWeekDates(offset) {
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const dow = today.getDay(); // 0=Sun
+  const monday = new Date(today);
+  monday.setDate(today.getDate() - dow + (dow === 0 ? -6 : 1) + (offset * 7));
+  const days = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    days.push(d.toISOString().split('T')[0]);
+  }
+  return days;
+}
+
+function renderWeek() {
+  const days = getWeekDates(weekOffset);
+  const entries = getEntries();
+  const labels = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+
+  // Week title
+  const first = new Date(days[0] + 'T12:00:00');
+  const last = new Date(days[6] + 'T12:00:00');
+  document.getElementById('weekTitle').textContent =
+    first.toLocaleDateString('en-US',{month:'short',day:'numeric'}) + ' – ' +
+    last.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+
+  // Grid
+  const grid = document.getElementById('weekGrid');
+  grid.innerHTML = days.map((d, i) => {
+    const e = entries[d];
+    const pct = e ? ((e.energy / 10) * 100) : 0;
+    const hue = e ? e.energy * 22 : 0;
+    return `
+    <div class="day-cell">
+      <div class="day-label">${labels[i]}</div>
+      <div class="day-energy">
+        <div class="day-energy-fill" style="height:${pct}%;background:hsl(${hue},55%,55%)"></div>
+      </div>
+      <div class="day-dot ${e ? 'has-entry' : ''}"></div>
+    </div>`;
+  }).join('');
+
+  // Stats
+  const weekEntries = days.map(d => entries[d]).filter(Boolean);
+  const avgEnergy = weekEntries.length
+    ? (weekEntries.reduce((a, b) => a + (b.energy || 5), 0) / weekEntries.length).toFixed(1)
+    : '—';
+  const totalWins = weekEntries.reduce((a, e) => a + (e.wins || []).length, 0);
+  const totalGrat = weekEntries.reduce((a, e) => a + (e.grat || []).length, 0);
+  document.getElementById('statRow').innerHTML = `
+    <div class="stat-card"><span class="stat-val">${weekEntries.length}/7</span><div class="stat-lbl">Days Logged</div></div>
+    <div class="stat-card"><span class="stat-val">${avgEnergy}</span><div class="stat-lbl">Avg Energy</div></div>
+    <div class="stat-card"><span class="stat-val">${totalWins}</span><div class="stat-lbl">Wins Logged</div></div>
+  `;
+
+  // Gratitude cloud
+  const allGrat = weekEntries.flatMap(e => e.grat || []).filter(Boolean);
+  const gratHtml = `
+    <div class="wins-cloud" style="margin-bottom:14px">
+      <div class="wins-cloud-title" style="color:var(--green)">This Week's Gratitude</div>
+      <div class="wins-cloud-items">
+        ${allGrat.length
+          ? allGrat.map(g => `<div class="wins-chip" style="border-color:rgba(110,184,158,0.25);color:var(--green)">♡ ${g}</div>`).join('')
+          : '<div style="color:var(--muted);font-size:12px">No gratitude logged this week yet.</div>'}
+      </div>
+    </div>`;
+
+  // Wins cloud
+  const allWins = weekEntries.flatMap(e => e.wins || []).filter(Boolean);
+  document.getElementById('winsCloud').innerHTML = gratHtml + `
+    <div class="wins-cloud-title">This Week's Wins</div>
+    <div class="wins-cloud-items">
+      ${allWins.length
+        ? allWins.map(w => `<div class="wins-chip">${w}</div>`).join('')
+        : '<div style="color:var(--muted);font-size:12px">No wins logged this week yet.</div>'}
+    </div>
+  `;
+}
+
+function changeWeek(dir) {
+  weekOffset += dir;
+  renderWeek();
+}
+
+// Nav
+document.querySelectorAll('.nav-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('view-' + btn.dataset.view).classList.add('active');
   });
+});
 
-  const avgScore = (totalScore / totalVirtues).toFixed(1);
-  const strongPercent = Math.round((totalStrong / totalVirtues) * 100);
+// Energy slider
+document.getElementById('energySlider').addEventListener('input', function() {
+  document.getElementById('energyVal').textContent = this.value;
+  document.getElementById('energyLabel').textContent = energyLabels[this.value];
+});
 
-  return { avgScore, strongPercent, totalAthletes: athletes.length };
-}
-
-// ─── MODALS ───────────────────────────────────────────────────────────────────
-function Modal({title, onClose, children}) {
-  return (
-    <div style={{position:"fixed", inset:0, background:"rgba(0,0,0,0.75)", zIndex:500, display:"flex", alignItems:"center", justifyContent:"center"}} onClick={e=>e.target===e.currentTarget&&onClose()}>
-      <div style={{background:"#fff", borderRadius:16, width:"92%", maxWidth:720, maxHeight:"92vh", overflow:"hidden", boxShadow:"0 25px 70px rgba(0,0,0,0.25)"}}>
-        <div style={{padding:"18px 24px", borderBottom:"1px solid #dee2e6", display:"flex", justifyContent:"space-between", alignItems:"center"}}>
-          <span style={{fontSize:21, fontWeight:800, color:C.orange}}>{title}</span>
-          <button onClick={onClose} style={{fontSize:24, background:"none", border:"none", color:"#666"}}>✕</button>
-        </div>
-        <div style={{padding:24, overflowY:"auto", maxHeight:"78vh"}}>{children}</div>
-      </div>
-    </div>
-  );
-}
-
-function ConfirmDelete({name, onConfirm, onCancel}) {
-  return (
-    <Modal title="Delete Athlete" onClose={onCancel}>
-      <p style={{fontSize:16, marginBottom:24}}>Are you sure you want to permanently delete <strong>{name}</strong>?</p>
-      <p style={{color:"#ef4444", marginBottom:24}}>This cannot be undone.</p>
-      <div style={{display:"flex", gap:12, justifyContent:"flex-end"}}>
-        <button onClick={onCancel} style={{padding:"12px 24px", border:"none", background:"#ddd", borderRadius:10}}>Cancel</button>
-        <button onClick={onConfirm} style={{padding:"12px 28px", border:"none", background:"#ef4444", color:"#fff", borderRadius:10, fontWeight:700}}>Yes, Delete</button>
-      </div>
-    </Modal>
-  );
-}
-
-// ─── EDIT MODAL ───────────────────────────────────────────────────────────────
-function EditModal({person, onSave, onClose}) {
-  const [data, setData] = useState({...person, notes: person.notes || ""});
-
-  const updateScore = (key, value) => setData(prev => ({...prev, scores: {...prev.scores, [key]: Number(value)}}));
-
-  return (
-    <Modal title={data.id ? "Edit Athlete" : "Add New Athlete"} onClose={onClose}>
-      <input placeholder="Athlete Name *" value={data.name||""} onChange={e=>setData({...data,name:e.target.value})} style={{width:"100%", padding:14, fontSize:17, border:`2px solid ${C.border}`, borderRadius:10, marginBottom:12}} />
-      <input placeholder="Role / Team (optional)" value={data.role||""} onChange={e=>setData({...data,role:e.target.value})} style={{width:"100%", padding:14, fontSize:17, border:`2px solid ${C.border}`, borderRadius:10, marginBottom:20}} />
-
-      <div style={{marginBottom:20}}>
-        <div style={{fontWeight:700, color:C.orange, marginBottom:12}}>Score Each Virtue (0–3)</div>
-        {Object.values(VIRTUES).map(t => (
-          <div key={t.key} style={{marginBottom:16, padding:16, background:"#fff", border:`1px solid ${t.border}`, borderRadius:12}}>
-            <div style={{display:"flex", alignItems:"center", gap:12, marginBottom:8}}>
-              <span style={{fontSize:28}}>{t.icon}</span>
-              <div style={{flex:1, fontWeight:700, color:t.color}}>{t.label}</div>
-            </div>
-            <div style={{fontSize:13, color:"#555", marginBottom:10}}>{t.scoreMeaning}</div>
-            <div style={{display:"flex", gap:6}}>
-              {[0,1,2,3].map(n => (
-                <button key={n} onClick={()=>updateScore(t.key,n)} style={{flex:1, padding:"10px", borderRadius:8, background: data.scores[t.key]===n ? C.orange : "#f1f3f5", color: data.scores[t.key]===n ? "#fff" : "#333", fontWeight:700}}>
-                  {n}
-                </button>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div style={{marginBottom:20}}>
-        <div style={{fontWeight:700, marginBottom:8}}>Notes / Observations / Prayers</div>
-        <textarea value={data.notes} onChange={e=>setData({...data, notes:e.target.value})} placeholder="Key moments, growth areas, specific prayers..." style={{width:"100%", height:130, padding:14, border:`2px solid ${C.border}`, borderRadius:10, resize:"vertical"}} />
-      </div>
-
-      <div style={{display:"flex", gap:12, justifyContent:"flex-end"}}>
-        <button onClick={onClose} style={{padding:"12px 24px", border:"none", background:"#ddd", borderRadius:10}}>Cancel</button>
-        <button onClick={()=>onSave(data)} style={{padding:"12px 32px", border:"none", background:C.orange, color:"#fff", borderRadius:10, fontWeight:700}} disabled={!data.name?.trim()}>💾 Save Changes</button>
-      </div>
-    </Modal>
-  );
-}
-
-// ─── PERSON DETAIL ────────────────────────────────────────────────────────────
-function PersonDetail({person, onClose, onEdit}) {
-  const [tab, setTab] = useState("assess");
-  const combo = getCombo(person.scores);
-
-  return (
-    <Modal title={person.name} onClose={onClose}>
-      <div style={{display:"flex", justifyContent:"space-between", marginBottom:20}}>
-        <div>
-          <div style={{fontSize:52}}>{combo.icon}</div>
-          <div style={{fontSize:24, fontWeight:800, color:combo.color}}>{combo.label}</div>
-        </div>
-        <button onClick={()=>{ onEdit(person); onClose(); }} style={{background:C.orange, color:"#fff", border:"none", padding:"10px 22px", borderRadius:10, fontWeight:700}}>✏ Edit</button>
-      </div>
-
-      <div style={{marginBottom:24}}>
-        <div style={{display:"flex", justifyContent:"space-between", fontSize:14, marginBottom:8}}>
-          <span>Character Progress</span>
-          <span>{combo.progress}%</span>
-        </div>
-        <div className="progress-bar">
-          <div className="progress-fill" style={{width: `${combo.progress}%`, background: combo.progress > 80 ? "linear-gradient(90deg,#00b36b,#34d399)" : combo.progress > 50 ? "linear-gradient(90deg,#ff8c00,#ffaa00)" : "#dc3545"}} />
-        </div>
-        <div style={{fontSize:13, color:C.textMuted, marginTop:6}}>
-          Last updated: {person.lastUpdated ? new Date(person.lastUpdated).toLocaleDateString() : "Never"}
-        </div>
-      </div>
-
-      <div style={{display:"flex", borderBottom:"3px solid #ff8c00", marginBottom:20}}>
-        {["assess","develop","notes"].map(t => (
-          <button key={t} onClick={()=>setTab(t)} style={{flex:1, padding:"14px", fontWeight:700, background:tab===t?C.orange:"#f1f3f5", color:tab===t?"#fff":"#333", border:"none"}}>
-            {t==="assess"?"📊 Profile":t==="develop"?"🛠 Develop":"📝 Notes"}
-          </button>
-        ))}
-      </div>
-
-      {tab==="assess" && Object.entries(person.scores).map(([k,v]) => {
-        const t = VIRTUES[k];
-        const showHas = v >= 2;
-        return (
-          <div key={k} style={{marginBottom:20, background:"#fff", border:`2px solid ${t.border}`, borderRadius:14, overflow:"hidden"}}>
-            <div style={{background:t.bg, padding:"16px 20px", display:"flex", alignItems:"center", gap:16}}>
-              <span style={{fontSize:42}}>{t.icon}</span>
-              <div style={{flex:1}}><div style={{fontSize:21, fontWeight:800, color:t.color}}>{t.label}</div></div>
-              <span style={{fontSize:18, fontWeight:700}}>{v}/3</span>
-            </div>
-            <div style={{padding:"20px"}}>
-              {(showHas ? t.strong : t.weak).map((s,i) => (
-                <div key={i} style={{marginBottom:6}}>{showHas?"→":"–"} {s}</div>
-              ))}
-            </div>
-          </div>
-        );
-      })}
-
-      {tab==="develop" && (
-        <div>
-          {Object.entries(person.scores).map(([k,v]) => {
-            const t = VIRTUES[k];
-            return (
-              <div key={k} style={{marginBottom:20, background:"#fff", border:`2px solid ${t.border}`, borderRadius:14, overflow:"hidden"}}>
-                <div style={{background:t.bg, padding:"14px 20px", display:"flex", alignItems:"center", gap:12}}>
-                  <span style={{fontSize:28}}>{t.icon}</span>
-                  <div style={{fontSize:18, fontWeight:800, color:t.color, flex:1}}>{t.label}</div>
-                  <span style={{fontSize:14, color:C.textMuted, background:"#fff", padding:"4px 10px", borderRadius:20, fontWeight:700}}>{SCORE_LABELS[v]}</span>
-                </div>
-                <div style={{padding:"16px 20px"}}>
-                  {t.develop.map((step,i) => (
-                    <div key={i} style={{display:"flex", gap:12, marginBottom:10, alignItems:"flex-start"}}>
-                      <span style={{background:C.orange, color:"#fff", borderRadius:"50%", width:22, height:22, display:"flex", alignItems:"center", justifyContent:"center", fontSize:12, fontWeight:800, flexShrink:0}}>{i+1}</span>
-                      <span style={{fontSize:14, color:C.text, lineHeight:1.5}}>{step}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
-
-      {tab==="notes" && (
-        <div style={{background:"#fff", border:`1px solid ${C.border}`, borderRadius:12, padding:24, minHeight:200, whiteSpace:"pre-wrap", fontSize:15}}>
-          {person.notes || "No notes added yet."}
-        </div>
-      )}
-    </Modal>
-  );
-}
-
-const BLANK_ATHLETE = { id:"", name:"", role:"", notes:"", scores:{L:1,P:1,S:1,G:1,H:1,Gr:1,J:1}, lastUpdated: null };
-
-// ─── MAIN APP ─────────────────────────────────────────────────────────────────
-function App() {
-  const [tab, setTab] = useState("athletes");
-  const [athletes, setAthletes] = useState(() => load("awaygame_athletes_v1", []));
-  const [editing, setEditing] = useState(null);
-  const [viewing, setViewing] = useState(null);
-  const [deleteConfirm, setDeleteConfirm] = useState(null);
-
-  function saveAthlete(p) {
-    const updated = {...p, id: p.id || uid(), lastUpdated: Date.now()};
-    const next = p.id ? athletes.map(x => x.id === p.id ? updated : x) : [...athletes, updated];
-    setAthletes(next);
-    save("awaygame_athletes_v1", next);
-    setEditing(null);
-  }
-
-  function deleteAthlete(id) {
-    const next = athletes.filter(a => a.id !== id);
-    setAthletes(next);
-    save("awaygame_athletes_v1", next);
-    setDeleteConfirm(null);
-    if (viewing && viewing.id === id) setViewing(null);
-  }
-
-  const teamStats = calculateTeamProgress(athletes);
-
-  return (
-    <div style={{minHeight:"100vh", background:"#f8f9fa"}}>
-      {/* HEADER */}
-      <div style={{background:"#fff", borderBottom:"4px solid #ff8c00", padding:"0 24px", height:76, display:"flex", alignItems:"center", justifyContent:"space-between", boxShadow:"0 3px 12px rgba(0,0,0,0.1)"}}>
-        <div>
-          <div style={{fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:32, letterSpacing:1.5, color:C.orange}}>AWAY GAME</div>
-          <div style={{fontSize:13, color:"#555"}}>Christian Parent’s Playbook</div>
-        </div>
-        <div style={{display:"flex", gap:8}}>
-          <button onClick={()=>setTab("athletes")} style={{padding:"10px 22px", borderRadius:10, background:tab==="athletes"?C.orange:"#fff", color:tab==="athletes"?"#fff":"#333", fontWeight:700, border:"2px solid #ff8c00"}}>👥 My Athletes</button>
-          <button onClick={()=>setTab("playbook")} style={{padding:"10px 22px", borderRadius:10, background:tab==="playbook"?C.orange:"#fff", color:tab==="playbook"?"#fff":"#333", fontWeight:700, border:"2px solid #ff8c00"}}>📖 The Playbook</button>
-        </div>
-      </div>
-
-      {tab === "athletes" && (
-        <div style={{padding:24}}>
-          {/* TEAM PROGRESS DASHBOARD */}
-          {athletes.length > 0 && (
-            <div className="team-card" style={{marginBottom:32}}>
-              <div style={{fontSize:20, fontWeight:800, marginBottom:16, color:C.orange}}>Team Progress Overview</div>
-              <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(180px, 1fr))", gap:20}}>
-                <div>
-                  <div style={{fontSize:13, color:C.textMuted}}>Team Average Score</div>
-                  <div style={{fontSize:32, fontWeight:800, color:C.orange}}>{teamStats.avgScore}</div>
-                  <div style={{fontSize:13}}>out of 3.0</div>
-                </div>
-                <div>
-                  <div style={{fontSize:13, color:C.textMuted}}>Strong Virtues</div>
-                  <div style={{fontSize:32, fontWeight:800, color: teamStats.strongPercent > 70 ? C.green : C.orange}}>{teamStats.strongPercent}%</div>
-                </div>
-                <div>
-                  <div style={{fontSize:13, color:C.textMuted}}>Athletes Tracked</div>
-                  <div style={{fontSize:32, fontWeight:800}}>{teamStats.totalAthletes}</div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:28}}>
-            <h1 style={{fontSize:28, fontWeight:800}}>My Athletes</h1>
-            <button onClick={()=>setEditing(BLANK_ATHLETE)} style={{background:C.orange, color:"#fff", border:"none", padding:"12px 28px", borderRadius:12, fontWeight:700}}>＋ Add Athlete</button>
-          </div>
-
-          {athletes.length === 0 ? (
-            <div style={{textAlign:"center", padding:"120px 20px", color:"#666"}}>
-              <div style={{fontSize:80}}>⚽️🏀🏈</div>
-              <div style={{fontSize:24, margin:"20px 0"}}>Start building your team’s character</div>
-              <button onClick={()=>setEditing(BLANK_ATHLETE)} style={{background:C.orange, color:"#fff", padding:"14px 36px", borderRadius:12, fontSize:17, fontWeight:700}}>Add Your First Athlete</button>
-            </div>
-          ) : (
-            <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(310px, 1fr))", gap:20}}>
-              {athletes.map(p => {
-                const combo = getCombo(p.scores);
-                return (
-                  <div key={p.id} style={{background:"#fff", border:`1px solid ${C.border}`, borderRadius:16, padding:22, boxShadow:"0 6px 20px rgba(0,0,0,0.07)", position:"relative"}}>
-                    <button 
-                      onClick={(e)=>{e.stopPropagation(); setDeleteConfirm(p);}} 
-                      className="delete-btn" 
-                      style={{position:"absolute", top:12, right:12}}
-                    >
-                      🗑
-                    </button>
-                    
-                    <div onClick={()=>setViewing(p)} style={{cursor:"pointer"}}>
-                      <div style={{fontSize:22, fontWeight:800, marginBottom:8}}>{p.name}</div>
-                      {p.role && <div style={{color:C.textSub, marginBottom:12}}>{p.role}</div>}
-                      
-                      <div style={{display:"flex", gap:8, flexWrap:"wrap", marginBottom:16}}>
-                        {Object.entries(p.scores).map(([k,v]) => (
-                          <div key={k} style={{background:VIRTUES[k].bg, padding:"6px 10px", borderRadius:8, fontSize:14}}>{VIRTUES[k].icon} {v}</div>
-                        ))}
-                      </div>
-
-                      <div style={{marginBottom:12}}>
-                        <div className="progress-bar">
-                          <div className="progress-fill" style={{width: `${combo.progress}%`, background: combo.progress > 80 ? "linear-gradient(90deg,#00b36b,#34d399)" : combo.progress > 50 ? "linear-gradient(90deg,#ff8c00,#ffaa00)" : "#dc3545"}} />
-                        </div>
-                      </div>
-
-                      <div style={{fontSize:13, color:C.textMuted}}>Last updated: {p.lastUpdated ? new Date(p.lastUpdated).toLocaleDateString() : "Never"}</div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      )}
-
-      {tab === "playbook" && (
-        <div style={{padding:24, maxWidth:820, margin:"0 auto"}}>
-          <h2 style={{color:C.orange, marginBottom:8}}>The Seven Virtues</h2>
-          <p style={{color:C.textSub, marginBottom:32}}>Fruit of the Spirit applied to youth sports.</p>
-          {Object.values(VIRTUES).map(t => (
-            <div key={t.key} style={{marginBottom:24, background:"#fff", border:`1px solid ${t.border}`, borderRadius:16, padding:24}}>
-              <div style={{display:"flex", alignItems:"center", gap:16}}>
-                <span style={{fontSize:48}}>{t.icon}</span>
-                <div>
-                  <div style={{fontSize:22, fontWeight:800, color:t.color}}>{t.label}</div>
-                  <div style={{color:C.textSub}}>"{t.tagline}"</div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {editing && <EditModal person={editing} onSave={saveAthlete} onClose={()=>setEditing(null)} />}
-      {viewing && <PersonDetail person={viewing} onClose={()=>setViewing(null)} onEdit={p=>{setViewing(null); setEditing(p);}} />}
-      {deleteConfirm && <ConfirmDelete name={deleteConfirm.name} onConfirm={()=>deleteAthlete(deleteConfirm.id)} onCancel={()=>setDeleteConfirm(null)} />}
-    </div>
-  );
-}
-
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(React.createElement(App));
+// Init
+document.getElementById('todayDate').textContent = formatDate(getToday());
+document.getElementById('streakCount').textContent = calcStreak();
+loadTodayForm();
+renderLog();
+renderWeek();
 </script>
 </body>
 </html>
