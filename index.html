@@ -603,6 +603,45 @@
     color: var(--muted);
     letter-spacing: 0.06em;
   }
+
+  .io-wrap {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 8px 24px 0;
+  }
+
+  .io-disclaimer {
+    font-size: 11px;
+    color: var(--muted);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+
+  .io-buttons { display: flex; gap: 10px; }
+
+  .io-btn {
+    flex: 1;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    border-radius: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 12px;
+    cursor: pointer;
+    text-align: center;
+    transition: color 0.2s, border-color 0.2s;
+    display: block;
+  }
+
+  .io-export:hover { color: var(--accent); border-color: var(--accent); }
+  .io-import:hover { color: var(--green); border-color: var(--green); }
 </style>
 </head>
 <body>
@@ -716,6 +755,18 @@
 <!-- LOG VIEW -->
 <div id="view-log" class="view">
   <div class="log-wrap" id="logContainer"></div>
+  <div class="io-wrap">
+    <div class="io-disclaimer">
+      ⚠ Your data lives in this browser only. Export regularly to avoid losing your entries if you clear your cache, switch browsers, or change devices.
+    </div>
+    <div class="io-buttons">
+      <button class="io-btn io-export" onclick="exportData()">↓ Export JSON</button>
+      <label class="io-btn io-import">
+        ↑ Import JSON
+        <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+      </label>
+    </div>
+  </div>
 </div>
 
 <!-- WEEKLY VIEW -->
@@ -1013,6 +1064,46 @@ document.getElementById('energySlider').addEventListener('input', function() {
   document.getElementById('energyVal').textContent = this.value;
   document.getElementById('energyLabel').textContent = energyLabels[this.value];
 });
+
+// Export / Import
+function exportData() {
+  const entries = getEntries();
+  const count = Object.keys(entries).length;
+  if (!count) { showToast('Nothing to export yet.'); return; }
+  const payload = JSON.stringify({ _app: 'shutdown_ritual_v1', exported: new Date().toISOString(), entries }, null, 2);
+  const blob = new Blob([payload], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `shutdown-ritual-${getToday()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast(`Exported ${count} entries ✓`);
+}
+
+function importData(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      const parsed = JSON.parse(ev.target.result);
+      const incoming = parsed.entries || parsed; // support raw or wrapped format
+      if (typeof incoming !== 'object' || Array.isArray(incoming)) throw new Error('Invalid format');
+      const existing = getEntries();
+      const merged = { ...existing, ...incoming };
+      saveEntries(merged);
+      document.getElementById('streakCount').textContent = calcStreak();
+      renderLog();
+      renderWeek();
+      showToast(`Imported ${Object.keys(incoming).length} entries ✓`);
+    } catch {
+      showToast('Import failed — invalid file.');
+    }
+    e.target.value = ''; // reset so same file can be re-imported
+  };
+  reader.readAsText(file);
+}
 
 // Init
 document.getElementById('todayDate').textContent = formatDate(getToday());
